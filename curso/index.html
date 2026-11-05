@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#5a0109">
+<title>Concursa: Docente orientador</title>
+<link rel="stylesheet" href="css/fonts.css">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<div id="portada" class="portada" role="dialog" aria-modal="true" aria-labelledby="portadaNombre">
+  <img src="img/portada.jpg" alt="Curso de preparación para el concurso de docente orientador: formación, conocimiento y compromiso" width="1400" height="788">
+  <div class="portada-texto">
+    <h1 class="portada-nombre" id="portadaNombre">Concursa:<small>Docente orientador</small></h1>
+    <button class="btn-portada" id="btnEntrar" disabled>Preparando la biblioteca…</button>
+    <p class="prueba-resta" id="pruebaResta" hidden></p>
+    <div class="prueba-fin" id="pruebaFin" hidden>
+      <h2 class="act-titulo">Terminó tu día de prueba</h2>
+      <p class="act-guia">Gracias por recorrer la biblioteca. Para seguir preparándote con los diez estantes, los retos, los simulacros y las sesiones en vivo, pide el curso completo.</p>
+      <div class="act-botones">
+        <button type="button" class="btn-portada" id="btnCompleto">Quiero el curso completo</button>
+        <button type="button" class="btn-linea" id="btnDesinstalar">Desinstalar la prueba</button>
+      </div>
+    </div>
+    <form class="activacion" id="activacion" hidden novalidate>
+      <h2 class="act-titulo">Activa tu acceso</h2>
+      <p class="act-guia">Envía tu número de equipo al administrador del curso. Te responderá con tu código de activación, que solo funciona en este teléfono.</p>
+      <div class="equipo"><span>Número de equipo</span><strong id="numEquipo">…</strong></div>
+      <div class="act-botones">
+        <button type="button" class="btn-portada" id="btnEnviarEquipo">Enviar por WhatsApp</button>
+        <button type="button" class="btn-linea" id="btnCopiarEquipo">Copiar número</button>
+      </div>
+      <label class="act-etq" for="codigoAct">Código de activación</label>
+      <input class="act-campo" id="codigoAct" type="text" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false" placeholder="Pega aquí el código que recibiste" maxlength="600">
+      <p class="act-error" id="actError" role="alert"></p>
+      <button type="submit" class="btn-portada" id="btnActivar">Activar</button>
+    </form>
+    <p class="autoria">© 2026 Fredy Moreno Quintero. Todos los derechos reservados.</p>
+  </div>
+</div>
+<div id="sala" aria-hidden="true"><canvas id="lienzo"></canvas><div id="etiquetas"></div></div>
+
+<header id="hud">
+  <div class="placa" id="placa">
+    <span class="placa-titulo">Concursa: Docente orientador</span>
+    <span class="placa-sub">Biblioteca de preparación al concurso</span>
+  </div>
+  <button class="hud-btn" id="btnSonido" aria-label="Silenciar sonidos" title="Sonido"></button>
+</header>
+
+<div id="pista" class="pista" hidden>Arrastra para mirar alrededor. Toca el piso para caminar y un estante o una mesa para abrirlo.</div>
+
+<nav id="dock">
+  <button class="dock-btn" id="btnCatalogo" aria-haspopup="dialog">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v5H4zM4 10h16v10H4z M9 6.5h6 M9 14h6" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+    <span>Catálogo</span>
+  </button>
+  <div class="dock-progreso" id="dockProgreso"></div>
+</nav>
+
+<!-- Libro abierto: panel principal de contenidos -->
+<section id="libro" class="libro" role="dialog" aria-modal="true" aria-labelledby="libroTitulo" hidden>
+  <div class="libro-tapa">
+    <button class="tapa-volver" id="btnVolver" aria-label="Volver">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+    </button>
+    <div class="tapa-textos">
+      <span class="tapa-kicker" id="libroKicker"></span>
+      <h1 id="libroTitulo"></h1>
+    </div>
+    <button class="tapa-cerrar" id="btnCerrar" aria-label="Cerrar y volver a la sala">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+    </button>
+  </div>
+  <div class="libro-cuerpo" id="libroCuerpo"></div>
+</section>
+
+<div id="aviso" class="aviso" role="status" aria-live="polite" hidden></div>
+
+<script src="js/modo.js"></script>
+<script src="js/almacen.js"></script>
+<script src="js/three.min.js"></script>
+<script src="js/cripto.js"></script>
+<script src="js/licencias.js"></script>
+<script src="js/activacion.js"></script>
+<script src="js/data_modulos.js"></script>
+<script src="js/data_items_a.js"></script>
+<script src="js/data_sesiones.js"></script>
+<script src="js/data_retos.js"></script>
+<script src="js/visor.js"></script>
+<script src="js/escena.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

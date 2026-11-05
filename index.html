@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#5a0109">
+<title>Concursa: Docente orientador</title>
+<meta name="description" content="Curso de preparación para el concurso de docente orientador: app para Android con biblioteca virtual, retos, simulacros y sesiones en vivo.">
+<meta property="og:title" content="Concursa: Docente orientador">
+<meta property="og:description" content="Prepárate para el concurso de docente orientador. Prueba el curso en línea o descarga la app para Android.">
+<meta property="og:image" content="curso/img/portada.jpg">
+<link rel="icon" href="curso/img/portada.jpg">
+<link rel="stylesheet" href="curso/css/fonts.css">
+<style>
+:root{--vino:#72020b;--vino-osc:#3e0106;--papel:#f6edd8;--papel-2:#efe2c3;--tinta:#2b2016;--suave:#5b4a37;--musgo:#24493a;--laton:#c39d52;--laton-claro:#e2c47f}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--papel);color:var(--tinta);font-family:Alegreya,Georgia,serif;font-size:18px;line-height:1.55}
+a{color:inherit}
+.hero{background:radial-gradient(120% 90% at 50% 0%,#8f0c17 0%,var(--vino) 45%,var(--vino-osc) 100%);color:#f6e7d0;padding:28px 16px 40px;text-align:center}
+.hero img{display:block;width:min(100%,640px);height:auto;margin:0 auto;border-radius:6px;box-shadow:0 18px 40px -12px rgba(0,0,0,.6)}
+h1{font-family:"IM Fell English",Georgia,serif;font-weight:400;font-size:clamp(34px,8vw,54px);line-height:1.05;margin:22px 0 6px}
+h1 small{display:block;font-size:.5em;color:var(--laton-claro);margin-top:6px}
+.lema{max-width:620px;margin:10px auto 0;font-size:19px;color:#f1d9bd}
+.botones{display:flex;flex-direction:column;gap:12px;align-items:center;margin:26px auto 0;max-width:420px}
+.boton{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:56px;padding:12px 20px;border-radius:999px;font-size:19px;text-decoration:none;font-weight:600}
+.boton svg{width:22px;height:22px;flex:0 0 22px}
+.b-prueba{background:#fbecd5;color:var(--vino);box-shadow:0 0 0 3px rgba(226,196,127,.55),0 8px 20px -8px rgba(0,0,0,.6)}
+.b-descarga{background:var(--musgo);color:#f0d896;border:1px solid var(--laton)}
+.b-whatsapp{background:transparent;color:#fbecd5;border:1.5px solid rgba(251,236,213,.7)}
+.nota-hero{font-size:15px;color:#e6c9ab;margin:14px 0 0}
+main{max-width:860px;margin:0 auto;padding:8px 16px 40px}
+h2{font-family:"IM Fell English",Georgia,serif;font-weight:400;font-size:clamp(28px,6vw,36px);color:var(--vino);margin:38px 0 12px;line-height:1.1}
+.rejilla{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+.tarjeta{background:linear-gradient(180deg,#fbf5e6,var(--papel-2));border:1px solid rgba(91,74,55,.3);border-radius:6px;padding:16px;box-shadow:0 2px 0 rgba(91,74,55,.15)}
+.tarjeta h3{font-family:"IM Fell English",Georgia,serif;font-weight:400;font-size:22px;color:var(--musgo);margin:0 0 4px}
+.tarjeta p{margin:0;font-size:16.5px;color:var(--suave)}
+ol.pasos{list-style:none;counter-reset:p;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+ol.pasos li{counter-increment:p;display:flex;gap:14px;align-items:flex-start;background:#fbf5e6;border:1px solid rgba(91,74,55,.25);border-radius:6px;padding:14px}
+ol.pasos li::before{content:counter(p);flex:0 0 36px;height:36px;border-radius:50%;display:grid;place-items:center;background:var(--vino);color:#f6e7d0;font-family:"IM Fell English",Georgia,serif;font-size:20px}
+ol.pasos b{color:var(--vino)}
+.aviso{margin:14px 0 0;padding:14px 16px;border-left:5px solid var(--laton);background:#f3e7c8;border-radius:4px;font-size:16.5px}
+.cierre{text-align:center;margin-top:34px}
+.cierre .boton{max-width:420px;margin:12px auto 0}
+.cierre .b-whatsapp{color:var(--vino);border-color:var(--vino)}
+footer{background:var(--vino-osc);color:#d9bfa3;text-align:center;font-size:14.5px;padding:22px 16px calc(22px + env(safe-area-inset-bottom))}
+</style>
+</head>
+<body>
+<header class="hero">
+  <img src="curso/img/portada.jpg" alt="Curso de preparación para el concurso de docente orientador: formación, conocimiento y compromiso" width="1400" height="788">
+  <h1>Concursa:<small>Docente orientador</small></h1>
+  <p class="lema">Prepárate para el concurso de docente orientador en una biblioteca virtual: lecturas, retos, simulacros tipo examen y sesiones en vivo.</p>
+  <div class="botones">
+    <a class="boton b-prueba" href="curso/"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h6a2 2 0 012 2v12a2 2 0 00-2-2H4zM20 5h-6a2 2 0 00-2 2v12a2 2 0 012-2h6z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>Probar el curso en línea</a>
+    <a class="boton b-descarga" href="descargas/Concursa-Docente-orientador.apk" download><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0l-4.5-4.5M12 15l4.5-4.5M5 19h14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Descargar la app para Android</a>
+    <a class="boton b-whatsapp" href="https://wa.me/573057842072?text=Hola%2C%20quiero%20informaci%C3%B3n%20sobre%20el%20curso%20Concursa%3A%20Docente%20orientador." target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 19.5l1.1-3.6A8 8 0 1112 20a8 8 0 01-3.9-1z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M9 8.5c0 3 2.5 6 5.5 6.5l1-1.4-1.8-1-1 .8c-1-.5-1.8-1.3-2.3-2.3l.8-1-1-1.8z" fill="currentColor"/></svg>Escribir por WhatsApp</a>
+  </div>
+  <p class="nota-hero">La versión en línea es una muestra gratuita del curso. La app completa se activa con un código personal.</p>
+</header>
+
+<main>
+  <h2>Qué encontrarás</h2>
+  <div class="rejilla">
+    <div class="tarjeta"><h3>Diez estantes</h3><p>Marco normativo, funciones, PNOE, enfoques, convivencia y rutas, curso de vida, gestión, inclusión, orientación socio-ocupacional y competencias comportamentales.</p></div>
+    <div class="tarjeta"><h3>Documentos técnicos</h3><p>Cada estante incluye fichas de lectura y su documento técnico completo para leer dentro de la app.</p></div>
+    <div class="tarjeta"><h3>Retos gamificados</h3><p>Rompecabezas, diagramas de flujo, desafíos de prioridades y expedientes de casos que afianzan lo que lees.</p></div>
+    <div class="tarjeta"><h3>Simulacros tipo examen</h3><p>Simulacro diagnóstico y simulacros de 20, 40 o 60 preguntas con puntaje, justificación de cada respuesta y módulos para reforzar.</p></div>
+    <div class="tarjeta"><h3>Sesiones en vivo</h3><p>Agenda de encuentros sincrónicos con el docente dinamizador del curso.</p></div>
+    <div class="tarjeta"><h3>Sin internet</h3><p>Una vez instalada, la app funciona sin conexión y guarda tu progreso en el teléfono.</p></div>
+  </div>
+
+  <h2>Cómo activar la app</h2>
+  <ol class="pasos">
+    <li><div><b>Descarga e instala la app.</b> Toca «Descargar la app para Android» y abre el archivo. Si el teléfono lo pide, permite instalar apps desde tu navegador o tu gestor de archivos.</div></li>
+    <li><div><b>Abre la app y copia tu número de equipo.</b> Aparece en la portada, con el formato XXXX-XXXX.</div></li>
+    <li><div><b>Envíalo por WhatsApp al 305 784 2072.</b> El botón «Enviar por WhatsApp» de la app arma el mensaje por ti.</div></li>
+    <li><div><b>Pega el código que recibirás.</b> Tu código de activación funciona solo en tu teléfono. Pégalo en la app y toca «Activar».</div></li>
+  </ol>
+  <p class="aviso">Como la app se instala por fuera de Google Play, Android puede mostrar un aviso de seguridad. Es normal en las apps que se instalan desde un archivo: elige «Instalar de todas formas» o «Más detalles» y luego «Instalar».</p>
+
+  <div class="cierre">
+    <h2>¿Tienes preguntas?</h2>
+    <p>Soy Fredy Moreno, dinamizador del curso. Escríbeme y con gusto te acompaño.</p>
+    <a class="boton b-whatsapp" href="https://wa.me/573057842072?text=Hola%2C%20quiero%20informaci%C3%B3n%20sobre%20el%20curso%20Concursa%3A%20Docente%20orientador." target="_blank" rel="noopener">Escribir por WhatsApp al 305 784 2072</a>
+  </div>
+</main>
+
+<footer>© 2026 Fredy Moreno Quintero. Todos los derechos reservados.</footer>
+</body>
+</html>
