@@ -83,7 +83,7 @@
   const ICO_CANDADO = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 11V8a4 4 0 018 0v3" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>';
   function htmlCursoCompleto(txt) {
     return `<div class="bloqueo-caja"><span>${ICO_CANDADO}</span><p><b>Disponible en el curso completo.</b> ${txt || 'En la versión de prueba puedes recorrer los estantes I y II con sus fichas, documentos, retos y práctica, y presentar el simulacro diagnóstico.'}</p>
-      <div class="acciones-bloqueo"><button class="btn" data-acc="curso-completo">Quiero el curso completo</button>${MODO.descarga ? `<a class="btn sec" href="${MODO.descarga}" target="_top">Descargar la app</a>` : ''}</div></div>`;
+      <div class="acciones-bloqueo">${MODO.ingreso && window.Nube ? '<button class="btn lacre" data-acc="ingresar-clave">Ya tengo clave: ingresar</button>' : ''}<button class="btn" data-acc="curso-completo">Quiero el curso completo</button>${MODO.descarga ? `<a class="btn sec" href="${MODO.descarga}" target="_top">Descargar la app</a>` : ''}</div></div>`;
   }
   // Marca de agua de las fichas: el mismo texto de los documentos, en diagonal
   function fondoMarca() {
@@ -921,6 +921,7 @@
       case 'iniciar-simulacro': iniciarSimulacro(); break;
       case 'iniciar-diagnostico': iniciarDiagnostico(); break;
       case 'ver-video': { const u = window.Activacion && Activacion.video(); if (u) abrirExterno(u); break; }
+      case 'ingresar-clave': if (window.Nube) Nube.pedirIngreso(); break;
       case 'cerrar-sesion': if (window.SesionWeb) SesionWeb.salir(); break;
       case 'curso-completo': if (window.Activacion) Activacion.whatsapp(TXT_COMPLETO); break;
       case 'guardar-video': {

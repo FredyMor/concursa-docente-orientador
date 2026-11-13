@@ -147,7 +147,7 @@ td button{padding:5px 9px;font-size:14px}
 (function () {
   'use strict';
   const CFG = window.CONCURSA_NUBE || {};
-  const SITIO = new URL('../estudiante/', location.href).href;
+  const SITIO = new URL('../curso/?ingreso=1', location.href).href;
   const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
   let adm = null, lista = [];
   const msg = (el, t, ok) => { const m = $(el); m.textContent = t || ''; m.className = 'msg' + (t ? (ok ? ' ok' : ' mal') : ''); };

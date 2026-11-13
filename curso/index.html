@@ -15,6 +15,10 @@
     <h1 class="portada-nombre" id="portadaNombre">Concursa:<small>Docente orientador</small></h1>
     <button class="btn-portada" id="btnEntrar" disabled>Preparando la biblioteca…</button>
     <p class="prueba-resta" id="pruebaResta" hidden></p>
+    <div class="prueba-fin" id="eleccionWeb" hidden>
+      <button type="button" class="btn-portada" id="btnPruebaWeb">Entrar a la prueba gratuita</button>
+      <button type="button" class="btn-linea" id="btnIngresoWeb">Ya tengo clave: ingresar al curso completo</button>
+    </div>
     <form class="activacion" id="ingresoWeb" hidden novalidate>
       <h2 class="act-titulo">Ingreso de estudiantes</h2>
       <p class="act-guia">Escribe tu número de documento de identidad y la clave que te asignó el administrador del curso.</p>
@@ -25,6 +29,7 @@
       <label class="act-recordar"><input type="checkbox" id="webRecordar"> Recordarme en este equipo</label>
       <p class="act-error" id="webError" role="alert"></p>
       <button type="submit" class="btn-portada" id="webEntrar">Ingresar</button>
+      <button type="button" class="btn-linea" id="webVolver">Volver a la prueba gratuita</button>
       <p class="act-guia">¿No tienes clave? <a href="https://wa.me/573057842072?text=Hola%2C%20quiero%20mi%20clave%20para%20el%20curso%20Concursa%3A%20Docente%20orientador%20en%20l%C3%ADnea." target="_blank" rel="noopener">Escríbele al administrador por WhatsApp</a>.</p>
     </form>
     <div class="prueba-fin" id="pruebaFin" hidden>
@@ -92,16 +97,8 @@
 
 <script src="js/modo.js"></script>
 <script src="js/almacen.js"></script>
-<script src="js/three.min.js"></script>
 <script src="js/cripto.js"></script>
-<script src="js/licencias.js"></script>
-<script src="js/activacion.js"></script>
-<script src="js/data_modulos.js"></script>
-<script src="js/data_items_a.js"></script>
-<script src="js/data_sesiones.js"></script>
-<script src="js/data_retos.js"></script>
-<script src="js/visor.js"></script>
-<script src="js/escena.js"></script>
-<script src="js/app.js"></script>
+<script src="../config.js"></script>
+<script src="js/nube.js"></script>
 </body>
 </html>
