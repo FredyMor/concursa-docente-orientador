@@ -98,6 +98,7 @@
   // Texto de la marca de agua: identifica la licencia de quien ve el documento
   function marca() {
     const autor = '© Fredy Moreno Quintero';
+    if (MODO.web && window.SesionWeb) return `${autor} · ${SesionWeb.nombre || 'Estudiante'} · Doc. ${SesionWeb.documento}`;
     if (MODO.prueba) return autor + ' · ' + (MODO.nombre || 'Versión de prueba') + ' · uso de prueba';
     if (MODO.libre) return autor + ' · ' + (MODO.nombre || 'Entorno simulado');
     const a = ls.get(CLAVE);

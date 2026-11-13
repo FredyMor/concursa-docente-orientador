@@ -44,7 +44,10 @@
     if (actual) { try { actual.pdf.destroy(); } catch (e) {} actual = null; }
     await script('pdfjs/pdf.worker.min.js');
     await script('pdfjs/pdf.min.js');
-    if (!window.DOCS || !window.DOCS[id]) { delete cargados['docs/' + id + '.js']; await script('docs/' + id + '.js'); }
+    if (!window.DOCS || !window.DOCS[id]) {
+      if (window.CargarDocumento) await window.CargarDocumento(id);     // ingreso web: el documento viene de la base de datos
+      else { delete cargados['docs/' + id + '.js']; await script('docs/' + id + '.js'); }
+    }
     const datos = decodificar(window.DOCS[id]);
     delete window.DOCS[id];                         // libera la copia en texto
     const lib = window.pdfjsLib;

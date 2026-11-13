@@ -15,6 +15,18 @@
     <h1 class="portada-nombre" id="portadaNombre">Concursa:<small>Docente orientador</small></h1>
     <button class="btn-portada" id="btnEntrar" disabled>Preparando la biblioteca…</button>
     <p class="prueba-resta" id="pruebaResta" hidden></p>
+    <form class="activacion" id="ingresoWeb" hidden novalidate>
+      <h2 class="act-titulo">Ingreso de estudiantes</h2>
+      <p class="act-guia">Escribe tu número de documento de identidad y la clave que te asignó el administrador del curso.</p>
+      <label class="act-etq" for="webDoc">Número de documento</label>
+      <input class="act-campo" id="webDoc" type="text" inputmode="numeric" autocomplete="username" spellcheck="false" placeholder="Ej. 1023456789" maxlength="20">
+      <label class="act-etq" for="webClave">Clave</label>
+      <input class="act-campo" id="webClave" type="password" autocomplete="current-password" spellcheck="false" placeholder="Tu clave" maxlength="40">
+      <label class="act-recordar"><input type="checkbox" id="webRecordar"> Recordarme en este equipo</label>
+      <p class="act-error" id="webError" role="alert"></p>
+      <button type="submit" class="btn-portada" id="webEntrar">Ingresar</button>
+      <p class="act-guia">¿No tienes clave? <a href="https://wa.me/573057842072?text=Hola%2C%20quiero%20mi%20clave%20para%20el%20curso%20Concursa%3A%20Docente%20orientador%20en%20l%C3%ADnea." target="_blank" rel="noopener">Escríbele al administrador por WhatsApp</a>.</p>
+    </form>
     <div class="prueba-fin" id="pruebaFin" hidden>
       <h2 class="act-titulo">Terminó tu día de prueba</h2>
       <p class="act-guia">Gracias por recorrer la biblioteca. Para seguir preparándote con los diez estantes, los retos, los simulacros y las sesiones en vivo, pide el curso completo.</p>

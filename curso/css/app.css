@@ -476,3 +476,7 @@ h2.separado{margin-top:30px;padding-top:18px;border-top:1px solid rgba(91,74,55,
 
 .acciones-bloqueo{display:flex;flex-wrap:wrap;gap:8px}
 .acciones-bloqueo a.btn{text-decoration:none;display:inline-flex;align-items:center}
+
+.act-recordar{display:flex;align-items:center;gap:8px;font-size:15.5px;color:#f1d9bd}
+.act-recordar input{width:18px;height:18px}
+#ingresoWeb a{color:#f0d896}

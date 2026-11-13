@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#24493a">
+<title>Administración · Concursa</title>
+<link rel="stylesheet" href="../curso/css/fonts.css">
+<style>
+:root{--vino:#72020b;--musgo:#24493a;--papel:#f6edd8;--papel2:#efe2c3;--tinta:#2b2016;--suave:#5b4a37;--laton:#c39d52;--ok:#2d5a38;--mal:#8e2a2a}
+*{box-sizing:border-box}
+body{margin:0;background:var(--papel);color:var(--tinta);font-family:Alegreya,Georgia,serif;font-size:17px;line-height:1.5}
+header{background:var(--musgo);color:#f0d896;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+header h1{font-family:"IM Fell English",Georgia,serif;font-weight:400;font-size:24px;margin:0}
+header button{background:transparent;border:1px solid rgba(240,216,150,.6);color:#f0d896;border-radius:4px;padding:6px 12px;font:inherit;font-size:15px}
+main{max-width:760px;margin:0 auto;padding:16px 16px 60px}
+h2{font-family:"IM Fell English",Georgia,serif;font-weight:400;font-size:26px;color:var(--vino);margin:18px 0 8px}
+.caja{background:#fbf5e6;border:1px solid rgba(91,74,55,.3);border-radius:6px;padding:16px;margin:0 0 14px}
+label{display:block;font-weight:600;margin:10px 0 4px;color:var(--suave)}
+input,select{width:100%;font:inherit;padding:10px 12px;border:1px solid rgba(91,74,55,.45);border-radius:4px;background:#fffdf7;color:var(--tinta)}
+.fila{display:flex;gap:8px;align-items:stretch}
+.fila input{flex:1}
+button,.boton{font:inherit;cursor:pointer;border-radius:4px;padding:10px 16px;border:1px solid var(--musgo);background:var(--musgo);color:#f0d896;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+button.sec,.boton.sec{background:transparent;color:var(--musgo)}
+button.peligro{background:transparent;color:var(--mal);border-color:var(--mal)}
+button:disabled{opacity:.55;cursor:default}
+.acciones{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.msg{min-height:1.4em;margin:8px 0 0;font-size:15.5px}
+.msg.ok{color:var(--ok)}.msg.mal{color:var(--mal)}
+nav.tabs{display:flex;gap:4px;overflow-x:auto;margin:0 0 12px;border-bottom:2px solid rgba(91,74,55,.25)}
+nav.tabs button{background:transparent;color:var(--suave);border:0;border-bottom:3px solid transparent;border-radius:0;padding:10px 12px;white-space:nowrap}
+nav.tabs button[aria-current]{color:var(--vino);border-bottom-color:var(--vino);font-weight:700}
+.mensaje{white-space:pre-wrap;background:#f3e7c8;border-left:4px solid var(--laton);padding:12px;border-radius:4px;font-size:16px}
+table{width:100%;border-collapse:collapse;font-size:15.5px}
+th,td{text-align:left;padding:8px 6px;border-bottom:1px solid rgba(91,74,55,.2);vertical-align:top}
+th{color:var(--suave);font-weight:600}
+td .acciones{margin:0}
+td button{padding:5px 9px;font-size:14px}
+.estado{display:inline-block;padding:1px 8px;border-radius:999px;font-size:13px;background:#d6e6cf;color:var(--ok)}
+.estado.no{background:#f0d9cf;color:var(--mal)}
+.nota{color:var(--suave);font-size:15px}
+.barra{height:8px;background:rgba(91,74,55,.15);border-radius:4px;overflow:hidden;margin-top:8px}
+.barra i{display:block;height:100%;width:0;background:var(--musgo);transition:width .2s}
+[hidden]{display:none!important}
+@media (max-width:560px){.col-opc{display:none}}
+</style>
+</head>
+<body>
+<header><h1>Concursa · Administración</h1><button id="btnSalir" hidden>Cerrar sesión</button></header>
+<main>
+  <section id="vInicial" hidden>
+    <h2>Crea tu usuario de administrador</h2>
+    <div class="caja">
+      <p class="nota">Esto se hace una sola vez. Después nadie más podrá crear un administrador.</p>
+      <label for="iniUsuario">Usuario</label><input id="iniUsuario" autocomplete="username">
+      <label for="iniClave">Clave (mínimo 8 caracteres)</label><input id="iniClave" type="password" autocomplete="new-password">
+      <label for="iniClave2">Repite la clave</label><input id="iniClave2" type="password" autocomplete="new-password">
+      <div class="acciones"><button id="btnInicial">Crear administrador</button></div>
+      <p class="msg" id="msgInicial"></p>
+    </div>
+  </section>
+
+  <section id="vIngreso" hidden>
+    <h2>Ingreso del administrador</h2>
+    <div class="caja">
+      <label for="admUsuario">Usuario</label><input id="admUsuario" autocomplete="username">
+      <label for="admClave">Clave</label><input id="admClave" type="password" autocomplete="current-password">
+      <div class="acciones"><button id="btnIngresar">Ingresar</button></div>
+      <p class="msg" id="msgIngreso"></p>
+    </div>
+  </section>
+
+  <section id="vPanel" hidden>
+    <nav class="tabs">
+      <button data-tab="asignar" aria-current="page">Asignar clave</button>
+      <button data-tab="estudiantes">Estudiantes</button>
+      <button data-tab="contenido">Contenido</button>
+      <button data-tab="respaldo">Respaldo</button>
+    </nav>
+
+    <div data-vista="asignar">
+      <div class="caja">
+        <p class="nota">Cada documento tiene una sola clave. Si el documento ya existe, se reemplaza su clave y se reactiva su acceso.</p>
+        <label for="asgDoc">Documento de identidad</label><input id="asgDoc" inputmode="numeric" placeholder="Ej. 1023456789">
+        <label for="asgNombre">Nombre</label><input id="asgNombre" placeholder="Nombre del estudiante">
+        <label for="asgTel">WhatsApp (opcional)</label><input id="asgTel" inputmode="tel" placeholder="Ej. 3001234567">
+        <label for="asgClave">Clave</label>
+        <div class="fila"><input id="asgClave" autocomplete="off" spellcheck="false"><button class="sec" id="btnGenerar" type="button">Generar</button></div>
+        <div class="acciones"><button id="btnAsignar">Guardar y asignar</button></div>
+        <p class="msg" id="msgAsignar"></p>
+      </div>
+      <div class="caja" id="cajaMensaje" hidden>
+        <h2 style="margin-top:0">Mensaje para el estudiante</h2>
+        <div class="mensaje" id="txtMensaje"></div>
+        <div class="acciones"><button id="btnCopiar">Copiar mensaje</button><a class="boton sec" id="lnkWhatsApp" target="_blank" rel="noopener">Enviar por WhatsApp</a></div>
+        <p class="nota">La clave no se puede volver a ver después: la base de datos la guarda cifrada. Si el estudiante la pierde, asígnale una nueva.</p>
+      </div>
+    </div>
+
+    <div data-vista="estudiantes" hidden>
+      <div class="caja">
+        <div class="fila"><input id="buscar" placeholder="Buscar por documento o nombre"><button class="sec" id="btnRecargar">Actualizar</button></div>
+        <p class="nota" id="resumenEst"></p>
+        <div style="overflow-x:auto"><table><thead><tr><th>Documento</th><th>Nombre</th><th class="col-opc">Último ingreso</th><th>Estado</th><th></th></tr></thead><tbody id="tablaEst"></tbody></table></div>
+        <p class="msg" id="msgEst"></p>
+      </div>
+    </div>
+
+    <div data-vista="contenido" hidden>
+      <div class="caja">
+        <p class="nota">El contenido completo del curso vive en la base de datos, no en el sitio público. Selecciona el archivo <b>contenido-concursa.json</b> para cargarlo o actualizarlo.</p>
+        <input type="file" id="archContenido" accept=".json,application/json">
+        <div class="acciones"><button id="btnSubir" disabled>Cargar contenido</button></div>
+        <div class="barra" hidden id="barraSubida"><i></i></div>
+        <p class="msg" id="msgContenido"></p>
+      </div>
+      <div class="caja"><h2 style="margin-top:0">Contenido cargado</h2><div id="listaContenido" class="nota">…</div></div>
+    </div>
+
+    <div data-vista="respaldo" hidden>
+      <div class="caja">
+        <h2 style="margin-top:0">Descargar respaldo</h2>
+        <p class="nota">El respaldo incluye los documentos, nombres, teléfonos y las claves cifradas, para poder restaurarlos. Guárdalo en un lugar privado.</p>
+        <div class="acciones"><button id="btnRespaldo">Descargar respaldo (JSON)</button><button class="sec" id="btnCSV">Descargar lista (CSV, sin claves)</button></div>
+        <p class="msg" id="msgRespaldo"></p>
+      </div>
+      <div class="caja">
+        <h2 style="margin-top:0">Restaurar respaldo</h2>
+        <p class="nota">Agrega los documentos del respaldo que no estén en la base de datos; no modifica los que ya existen.</p>
+        <input type="file" id="archRespaldo" accept=".json,application/json">
+        <div class="acciones"><button id="btnRestaurar" disabled>Restaurar</button></div>
+        <p class="msg" id="msgRestaurar"></p>
+      </div>
+      <div class="caja">
+        <h2 style="margin-top:0">Cambiar mi clave de administrador</h2>
+        <label for="nuevaClave">Nueva clave (mínimo 8 caracteres)</label><input id="nuevaClave" type="password" autocomplete="new-password">
+        <div class="acciones"><button class="sec" id="btnCambiarClave">Cambiar clave</button></div>
+        <p class="msg" id="msgClave"></p>
+      </div>
+    </div>
+  </section>
+  <p class="msg mal" id="msgConfig"></p>
+</main>
+<script src="../config.js"></script>
+<script>
+(function () {
+  'use strict';
+  const CFG = window.CONCURSA_NUBE || {};
+  const SITIO = new URL('../estudiante/', location.href).href;
+  const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+  let adm = null, lista = [];
+  const msg = (el, t, ok) => { const m = $(el); m.textContent = t || ''; m.className = 'msg' + (t ? (ok ? ' ok' : ' mal') : ''); };
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const fecha = f => f ? new Date(f).toLocaleString('es-CO', { dateStyle: 'medium', timeStyle: 'short' }) : '—';
+
+  async function rpc(fn, args) {
+    const r = await fetch(CFG.url.replace(/\/$/, '') + '/rest/v1/rpc/' + fn, {
+      method: 'POST', headers: { 'Content-Type': 'application/json', apikey: CFG.clave, Authorization: 'Bearer ' + CFG.clave },
+      body: JSON.stringify(args || {})
+    });
+    if (!r.ok) throw new Error('El servidor respondió ' + r.status + '.');
+    return r.json();
+  }
+  const conAdm = (fn, args) => rpc(fn, Object.assign({ p_usuario: adm.u, p_clave: adm.c }, args || {}));
+  function ver(id) { ['vInicial', 'vIngreso', 'vPanel'].forEach(v => ($('#' + v).hidden = v !== id)); $('#btnSalir').hidden = id !== 'vPanel'; }
+  function descargar(nombre, texto, tipo) {
+    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([texto], { type: tipo })); a.download = nombre;
+    document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+  }
+
+  async function inicio() {
+    if (!CFG.url || !CFG.clave) return msg('#msgConfig', 'Falta configurar la conexión con la base de datos (config.js).');
+    try {
+      const s = JSON.parse(sessionStorage.getItem('concursa.adm') || 'null');
+      if (s) { adm = s; const r = await rpc('admin_ingresar', { p_usuario: s.u, p_clave: s.c }); if (r.ok) return abrirPanel(); adm = null; }
+      const e = await rpc('admin_estado'); ver(e.hay_admin ? 'vIngreso' : 'vInicial');
+    } catch (ex) { msg('#msgConfig', 'No hay conexión con la base de datos. ' + ex.message); }
+  }
+  function abrirPanel() { sessionStorage.setItem('concursa.adm', JSON.stringify(adm)); ver('vPanel'); tab('asignar'); }
+
+  $('#btnInicial').onclick = async () => {
+    const u = $('#iniUsuario').value.trim(), c = $('#iniClave').value;
+    if (c !== $('#iniClave2').value) return msg('#msgInicial', 'Las claves no coinciden.');
+    const r = await rpc('admin_inicial', { p_usuario: u, p_clave: c });
+    if (!r.ok) return msg('#msgInicial', r.error);
+    adm = { u, c }; abrirPanel();
+  };
+  const ingresar = async () => {
+    const u = $('#admUsuario').value.trim(), c = $('#admClave').value;
+    msg('#msgIngreso', 'Verificando…', true);
+    try { const r = await rpc('admin_ingresar', { p_usuario: u, p_clave: c }); if (!r.ok) return msg('#msgIngreso', r.error); adm = { u, c }; abrirPanel(); }
+    catch (ex) { msg('#msgIngreso', ex.message); }
+  };
+  $('#btnIngresar').onclick = ingresar;
+  $('#admClave').onkeydown = e => { if (e.key === 'Enter') ingresar(); };
+  $('#btnSalir').onclick = () => { sessionStorage.removeItem('concursa.adm'); adm = null; location.reload(); };
+
+  function tab(t) {
+    $$('nav.tabs button').forEach(b => b.toggleAttribute('aria-current', b.dataset.tab === t));
+    $$('[data-vista]').forEach(v => (v.hidden = v.dataset.vista !== t));
+    if (t === 'estudiantes') cargarEstudiantes();
+    if (t === 'contenido') cargarContenido();
+  }
+  $$('nav.tabs button').forEach(b => (b.onclick = () => tab(b.dataset.tab)));
+
+  // ───── Asignar clave ─────
+  const ALFA = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+  function generar() { const v = new Uint32Array(8); crypto.getRandomValues(v); return [...v].map(x => ALFA[x % ALFA.length]).join(''); }
+  $('#btnGenerar').onclick = () => { $('#asgClave').value = generar(); };
+  $('#asgClave').value = generar();
+  $('#btnAsignar').onclick = async () => {
+    const d = $('#asgDoc').value, n = $('#asgNombre').value.trim(), t = $('#asgTel').value, c = $('#asgClave').value.trim();
+    const b = $('#btnAsignar'); b.disabled = true;
+    try {
+      const r = await conAdm('admin_asignar', { p_documento: d, p_nombre: n, p_telefono: t, p_clave_estudiante: c });
+      if (!r.ok) return msg('#msgAsignar', r.error);
+      msg('#msgAsignar', r.nuevo ? 'Estudiante registrado con su clave.' : 'Clave actualizada para ese documento.', true);
+      const texto = `Hola${n ? ' ' + n.split(' ')[0] : ''}, ya tienes acceso al curso Concursa: Docente orientador en línea.\n\nIngresa en: ${SITIO}\nDocumento: ${r.documento}\nClave: ${c}\n\nTu clave es personal; no la compartas.`;
+      $('#txtMensaje').textContent = texto; $('#cajaMensaje').hidden = false;
+      const tel = t.replace(/\D/g, '');
+      $('#lnkWhatsApp').href = 'https://wa.me/' + (tel ? (tel.length === 10 ? '57' + tel : tel) : '') + '?text=' + encodeURIComponent(texto);
+      $('#asgDoc').value = ''; $('#asgNombre').value = ''; $('#asgTel').value = ''; $('#asgClave').value = generar();
+    } catch (ex) { msg('#msgAsignar', ex.message); } finally { b.disabled = false; }
+  };
+  $('#btnCopiar').onclick = async () => {
+    try { await navigator.clipboard.writeText($('#txtMensaje').textContent); msg('#msgAsignar', 'Mensaje copiado.', true); }
+    catch (e) { msg('#msgAsignar', 'No se pudo copiar; selecciona el texto y cópialo.'); }
+  };
+
+  // ───── Estudiantes ─────
+  async function cargarEstudiantes() {
+    msg('#msgEst', 'Cargando…', true);
+    try { const r = await conAdm('admin_estudiantes'); if (!r.ok) return msg('#msgEst', r.error); lista = r.estudiantes; pintarEstudiantes(); msg('#msgEst', ''); }
+    catch (ex) { msg('#msgEst', ex.message); }
+  }
+  function pintarEstudiantes() {
+    const q = $('#buscar').value.trim().toLowerCase();
+    const f = lista.filter(e => !q || e.documento.toLowerCase().includes(q) || (e.nombre || '').toLowerCase().includes(q));
+    $('#resumenEst').textContent = `${lista.length} estudiantes; ${lista.filter(e => e.activo).length} activos.`;
+    $('#tablaEst').innerHTML = f.map(e => `<tr><td>${esc(e.documento)}</td><td>${esc(e.nombre)}${e.telefono ? `<br><span class="nota">${esc(e.telefono)}</span>` : ''}</td>
+      <td class="col-opc">${fecha(e.ultimo_ingreso)}<br><span class="nota">${e.ingresos} ingresos</span></td>
+      <td><span class="estado${e.activo ? '' : ' no'}">${e.activo ? 'Activo' : 'Inactivo'}</span></td>
+      <td><div class="acciones"><button class="sec" data-a="clave" data-d="${esc(e.documento)}">Nueva clave</button>
+        <button class="sec" data-a="${e.activo ? 'off' : 'on'}" data-d="${esc(e.documento)}">${e.activo ? 'Desactivar' : 'Activar'}</button>
+        <button class="peligro" data-a="borrar" data-d="${esc(e.documento)}">Eliminar</button></div></td></tr>`).join('') || '<tr><td colspan="5" class="nota">Sin estudiantes.</td></tr>';
+  }
+  $('#buscar').oninput = pintarEstudiantes;
+  $('#btnRecargar').onclick = cargarEstudiantes;
+  $('#tablaEst').onclick = async e => {
+    const b = e.target.closest('button[data-a]'); if (!b) return;
+    const d = b.dataset.d, est = lista.find(x => x.documento === d);
+    if (b.dataset.a === 'clave') { tab('asignar'); $('#asgDoc').value = d; $('#asgNombre').value = est.nombre || ''; $('#asgTel').value = est.telefono || ''; $('#asgClave').value = generar(); return; }
+    if (b.dataset.a === 'borrar' && !confirm(`¿Eliminar el documento ${d}? Perderá el acceso de inmediato.`)) return;
+    const r = b.dataset.a === 'borrar' ? await conAdm('admin_eliminar', { p_documento: d }) : await conAdm('admin_activar', { p_documento: d, p_activo: b.dataset.a === 'on' });
+    msg('#msgEst', r.ok ? 'Cambio guardado.' : (r.error || 'No se encontró el documento.'), r.ok); cargarEstudiantes();
+  };
+
+  // ───── Contenido ─────
+  const PARTE = 400000;
+  let paquete = null;
+  $('#archContenido').onchange = async e => {
+    paquete = null; $('#btnSubir').disabled = true; const f = e.target.files[0]; if (!f) return;
+    try {
+      const j = JSON.parse(await f.text());
+      if (j.formato !== 'concursa-contenido-v1' || !j.archivos) throw new Error();
+      paquete = j; $('#btnSubir').disabled = false;
+      msg('#msgContenido', `Paquete del ${j.fecha ? j.fecha.slice(0, 10) : '—'} con ${Object.keys(j.archivos).length} archivos. Toca «Cargar contenido».`, true);
+    } catch (ex) { msg('#msgContenido', 'Ese archivo no es un paquete de contenido de Concursa.'); }
+  };
+  $('#btnSubir').onclick = async () => {
+    if (!paquete) return;
+    const b = $('#btnSubir'); b.disabled = true; $('#barraSubida').hidden = false;
+    const tareas = []; Object.entries(paquete.archivos).forEach(([k, t]) => { for (let i = 0, p = 0; i < t.length || p === 0; i += PARTE, p++) tareas.push([k, p, t.slice(i, i + PARTE)]); });
+    try {
+      for (let i = 0; i < tareas.length; i++) {
+        const [k, p, d] = tareas[i];
+        const r = await conAdm('admin_subir', { p_archivo: k, p_parte: p, p_datos: d });
+        if (!r.ok) throw new Error(r.error);
+        $('#barraSubida i').style.width = ((i + 1) / tareas.length * 100) + '%';
+        msg('#msgContenido', `Cargando ${k}…`, true);
+      }
+      msg('#msgContenido', 'Contenido cargado. Los estudiantes ya pueden ingresar.', true); cargarContenido();
+    } catch (ex) { msg('#msgContenido', 'Se detuvo la carga: ' + ex.message + ' Vuelve a intentarlo.'); }
+    finally { b.disabled = false; }
+  };
+  async function cargarContenido() {
+    try {
+      const r = await conAdm('admin_contenido'); if (!r.ok) return;
+      $('#listaContenido').innerHTML = r.archivos.length ? '<table><tbody>' + r.archivos.map(a => `<tr><td>${esc(a.archivo)}</td><td>${(a.caracteres / 1e6).toFixed(2)} MB</td><td class="col-opc">${fecha(a.subido)}</td></tr>`).join('') + '</tbody></table>'
+        : 'Aún no hay contenido cargado.';
+    } catch (ex) { $('#listaContenido').textContent = ex.message; }
+  }
+
+  // ───── Respaldo ─────
+  const hoy = () => new Date().toISOString().slice(0, 10);
+  $('#btnRespaldo').onclick = async () => {
+    const r = await conAdm('admin_respaldo'); if (!r.ok) return msg('#msgRespaldo', r.error);
+    descargar(`concursa-estudiantes-${hoy()}.json`, JSON.stringify(r, null, 1), 'application/json');
+    msg('#msgRespaldo', `Respaldo con ${r.estudiantes.length} estudiantes descargado.`, true);
+  };
+  $('#btnCSV').onclick = async () => {
+    const r = await conAdm('admin_estudiantes'); if (!r.ok) return msg('#msgRespaldo', r.error);
+    const q = v => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
+    const csv = ['Documento,Nombre,WhatsApp,Estado,Creado,Último ingreso,Ingresos']
+      .concat(r.estudiantes.map(e => [e.documento, e.nombre, e.telefono, e.activo ? 'Activo' : 'Inactivo', fecha(e.creado), fecha(e.ultimo_ingreso), e.ingresos].map(q).join(','))).join('\n');
+    descargar(`concursa-estudiantes-${hoy()}.csv`, '﻿' + csv, 'text/csv');
+  };
+  let respaldo = null;
+  $('#archRespaldo').onchange = async e => {
+    respaldo = null; $('#btnRestaurar').disabled = true; const f = e.target.files[0]; if (!f) return;
+    try { const j = JSON.parse(await f.text()); if (j.formato !== 'concursa-estudiantes-v1') throw new Error(); respaldo = j; $('#btnRestaurar').disabled = false; msg('#msgRestaurar', `${j.estudiantes.length} estudiantes en el respaldo.`, true); }
+    catch (ex) { msg('#msgRestaurar', 'Ese archivo no es un respaldo de Concursa.'); }
+  };
+  $('#btnRestaurar').onclick = async () => {
+    const r = await conAdm('admin_restaurar', { p_estudiantes: respaldo.estudiantes });
+    msg('#msgRestaurar', r.ok ? `Restaurado. Agregados: ${r.agregados}. Ya estaban: ${respaldo.estudiantes.length - r.agregados}.` : r.error, r.ok);
+  };
+  $('#btnCambiarClave').onclick = async () => {
+    const n = $('#nuevaClave').value; const r = await conAdm('admin_cambiar_clave', { p_nueva: n });
+    if (r.ok) { adm.c = n; sessionStorage.setItem('concursa.adm', JSON.stringify(adm)); $('#nuevaClave').value = ''; }
+    msg('#msgClave', r.ok ? 'Clave cambiada.' : r.error, r.ok);
+  };
+
+  inicio();
+})();
+</script>
+</body>
+</html>

@@ -234,6 +234,7 @@
         <button class="ficha-idx mesa" data-ir="/vitrina"><span class="sig">Vitrina</span><span class="nom">Logros y títulos</span>
           <span class="det">${totalEstrellas()} de ${RETOS.length * 3} estrellas; ${RETOS.filter(superado).length} de ${RETOS.length} retos superados.</span></button>
       </div>
+      ${MODO.web && window.SesionWeb ? `<p class="nota separado">Ingresaste como ${esc(SesionWeb.nombre || 'estudiante')}, documento ${esc(SesionWeb.documento)}. <button class="btn sec" data-acc="cerrar-sesion">Cerrar sesión</button></p>` : ''}
       <h3 class="grupo-titulo">Estantes</h3>
       <div class="cajon">${MOD.map(tarjeta).join('')}</div>`);
   }
@@ -920,6 +921,7 @@
       case 'iniciar-simulacro': iniciarSimulacro(); break;
       case 'iniciar-diagnostico': iniciarDiagnostico(); break;
       case 'ver-video': { const u = window.Activacion && Activacion.video(); if (u) abrirExterno(u); break; }
+      case 'cerrar-sesion': if (window.SesionWeb) SesionWeb.salir(); break;
       case 'curso-completo': if (window.Activacion) Activacion.whatsapp(TXT_COMPLETO); break;
       case 'guardar-video': {
         const r = window.Activacion ? Activacion.leerVideo($('#msgVideo').value) : { ok: false, msg: 'No disponible.' };
