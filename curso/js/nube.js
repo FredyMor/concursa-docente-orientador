@@ -24,8 +24,9 @@
     if (!r.ok) throw new Error('servidor ' + r.status);
     return r.json();
   }
+  const VERSION = window.CONCURSA_VERSION || '';   // la pone tools/sitio.sh: evita que el navegador use archivos viejos
   function script(src) {
-    return new Promise((ok, mal) => { const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = () => mal(new Error(src)); document.body.appendChild(s); });
+    return new Promise((ok, mal) => { const s = document.createElement('script'); s.src = src + (VERSION ? '?v=' + VERSION : ''); s.onload = ok; s.onerror = () => mal(new Error(src)); document.body.appendChild(s); });
   }
   const ejecutar = (texto, nombre) => (0, eval)(texto + '\n//# sourceURL=' + nombre);
   const leer = () => { try { return JSON.parse(localStorage.getItem(SES) || sessionStorage.getItem(SES) || 'null'); } catch (e) { return null; } };
