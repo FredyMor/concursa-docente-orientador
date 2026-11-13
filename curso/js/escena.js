@@ -272,6 +272,9 @@
     zona.position.set(0, H / 2 + .1, .05); g.add(zona);
     const ancla = new T.Vector3(0, H + .55, P / 2 + .1); g.localToWorld(ancla);
     registrar('estante', mod.id, zona, ancla, `<b>${romano(mod.id)}</b>${mod.corto}`, placaMat, g);
+    // si la parte alta queda fuera de la vista (estantes cercanos, pantallas anchas), el letrero baja sobre el estante
+    const baja = new T.Vector3(0, 2.3, P / 2 + .1); g.localToWorld(baja);
+    interactivos[interactivos.length - 1].anclaBaja = baja;
   }
 
   /* ───────── Muebles ───────── */
@@ -547,8 +550,12 @@
     const w = lienzo.clientWidth, h = lienzo.clientHeight;
     interactivos.forEach(it => {
       tmp.copy(it.ancla).project(camera);
+      if (it.anclaBaja && tmp.y > .92) {
+        tmp.copy(it.anclaBaja).project(camera);
+        if (tmp.y > .92) tmp.y = .92;
+      }
       const dist = it.ancla.distanceTo(pos);
-      const lejos = it.tipo === 'mesa' ? 16 : it.tipo === 'ruta' ? 19 : 11.5;
+      const lejos = it.tipo === 'mesa' ? 16 : it.tipo === 'ruta' ? 19 : 22;
       const visible = tmp.z < 1 && tmp.x > -1.1 && tmp.x < 1.1 && tmp.y > -1.1 && tmp.y < 1.2 && dist < lejos;
       it._op = visible ? Math.max(0, Math.min(1, (lejos - dist) / 3.5)) : 0;
       it._x = (tmp.x * .5 + .5) * w; it._y = (-tmp.y * .5 + .5) * h; it._d = dist;
@@ -557,6 +564,9 @@
     const puestas = [];
     interactivos.filter(it => it._op > 0).sort((a, b) => a._d - b._d).forEach(it => {
       if (!it._w) it._w = it.etq.offsetWidth || 120;
+      // dentro de la pantalla y por debajo de la placa y del botón de sonido
+      it._x = Math.min(Math.max(it._x, it._w / 2 + 8), w - it._w / 2 - 8);
+      it._y = Math.max(it._y, 104);
       const r = { x0: it._x - it._w / 2 - 4, x1: it._x + it._w / 2 + 4, y0: it._y - 30, y1: it._y + 2 };
       if (puestas.some(p => r.x0 < p.x1 && r.x1 > p.x0 && r.y0 < p.y1 && r.y1 > p.y0)) it._op = 0; else puestas.push(r);
     });
