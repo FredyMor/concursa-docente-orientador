@@ -9,7 +9,7 @@
   const $ = s => document.querySelector(s);
   const ANTES = ['js/three.min.js', 'js/licencias.js', 'js/activacion.js'];
   const DESPUES = ['js/visor.js', 'js/escena.js', 'js/app.js'];
-  const DATOS_NUBE = ['js/data_modulos.js', 'js/data_items_a.js', 'js/data_items_b.js', 'js/data_sesiones.js', 'js/data_retos.js'];
+  const DATOS_NUBE = ['js/data_modulos.js', 'js/data_modulos_b.js', 'js/data_items_a.js', 'js/data_items_b.js', 'js/data_items_c.js', 'js/data_sesiones.js', 'js/data_retos.js'];
   const DATOS_PRUEBA = ['js/data_modulos.js', 'js/data_items_a.js', 'js/data_sesiones.js', 'js/data_retos.js'];
   const MODO_PRUEBA = Object.assign({}, window.CONCURSA_MODO);   // modo.js trae el modo de prueba del sitio
   let cred = null, cargando = false;

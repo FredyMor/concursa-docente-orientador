@@ -1,4 +1,4 @@
-/* Sala 3D: biblioteca vintage con diez estantes (módulos) y dos mesas
+/* Sala 3D: biblioteca vintage con catorce estantes (módulos) y dos mesas
    (sesión sincrónica y simulacro). Three.js r149, sin dependencias externas. */
 (function () {
   'use strict';
@@ -94,7 +94,7 @@
       for (let i = 0; i < 4000; i++) { g.fillStyle = `rgba(0,0,0,${r() * .08})`; g.fillRect(r() * w, r() * h, 2, 2); }
     });
   }
-  function romano(n) { return ['', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'][n] || String(n); }
+  function romano(n) { return ['', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'XIII', 'XIV'][n] || String(n); }
   function texPlaca(linea1, linea2, oscura) {
     return lienzoTex(512, 160, (g, w, h) => {
       const gr = g.createLinearGradient(0, 0, 0, h);
@@ -435,7 +435,12 @@
     const v = centro.clone().sub(pos); v.y = 0;
     const dist = v.length();
     let destino = null;
-    if (dist > 4.2) { destino = pos.clone().add(v.clone().setLength(dist - 3.6)); destino.y = 1.62; limitar(destino); }
+    if (it.tipo === 'estante') {
+      // de frente al estante: su cara mira hacia +z local
+      const n = new T.Vector3(0, 0, 1).applyQuaternion(it.obj.getWorldQuaternion(new T.Quaternion())); n.y = 0; n.normalize();
+      destino = centro.clone().add(n.multiplyScalar(3.4)); destino.y = 1.62; limitar(destino);
+      if (destino.distanceTo(pos) < .3) destino = null;
+    } else if (dist > 4.2) { destino = pos.clone().add(v.clone().setLength(dist - 3.6)); destino.y = 1.62; limitar(destino); }
     const desde = destino || pos;
     const w = centro.clone().sub(desde);
     const ny = Math.atan2(w.x, -w.z);
@@ -628,18 +633,26 @@
 
     construirSala();
     const mods = window.MODULOS;
-    const izq = [-7.3, -2.6, 2.1, 6.8], der = [-7.3, -2.6, 2.1, 6.8];
-    // pared izquierda: estantes 1 a 4; pared derecha: 5 a 8; fondo: 9 y 10
-    izq.forEach((z, i) => construirEstante(mods[i], -7.66, z, Math.PI / 2));
-    der.forEach((z, i) => construirEstante(mods[4 + i], 7.66, z, -Math.PI / 2));
-    construirEstante(mods[8], -4.2, -11.66, 0);
-    construirEstante(mods[9], 4.2, -11.66, 0);
+    // Catorce estantes: cinco por pared lateral y cuatro en el fondo, a los lados de la ventana.
+    // Con menos módulos (versiones anteriores) se conserva la distribución de diez.
+    if (mods.length >= 14) {
+      const lat = [-9.2, -4.6, 0, 4.6, 9.2];
+      lat.forEach((z, i) => construirEstante(mods[i], -7.66, z, Math.PI / 2));
+      lat.forEach((z, i) => construirEstante(mods[5 + i], 7.66, z, -Math.PI / 2));
+      [-5.4, -2.6, 2.6, 5.4].forEach((x, i) => construirEstante(mods[10 + i], x, -11.66, 0));
+    } else {
+      const izq = [-7.3, -2.6, 2.1, 6.8];
+      izq.forEach((z, i) => construirEstante(mods[i], -7.66, z, Math.PI / 2));
+      izq.forEach((z, i) => construirEstante(mods[4 + i], 7.66, z, -Math.PI / 2));
+      construirEstante(mods[8], -4.2, -11.66, 0);
+      construirEstante(mods[9], 4.2, -11.66, 0);
+    }
     mesaSesion(-3.2);
     mesaSimulacro(3.6);
     arana(0, -3.2); arana(0, 3.6);
     senalRuta();
-    globoObj = globo(-5.6, 9.8);
-    escalera(-7.05, -4.95, Math.PI / 2);
+    globoObj = mods.length >= 14 ? globo(6.95, -6.9) : globo(-5.6, 9.8);
+    escalera(-7.05, mods.length >= 14 ? -6.9 : -4.95, Math.PI / 2);
     crearPolvo();
     controles();
     addEventListener('resize', redimensionar);

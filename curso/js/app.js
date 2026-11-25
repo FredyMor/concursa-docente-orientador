@@ -5,12 +5,22 @@
   const $ = s => document.querySelector(s);
   const MOD = window.MODULOS, ITEMS = window.ITEMS, COMP = window.COMPETENCIAS, GUIA = window.GUIA;
   const SES = window.SESIONES, AGENDA = window.AGENDA_SESION, DOCS_INFO = window.DOCUMENTOS || {};
-  // Simulacro diagnóstico: diez ítems complejos fijos, uno por área del curso
-  const DIAG = ['1.09', '2.07', '3.07', '5.08', '6.06', '7.07', '8.06', '8.08', '9.08', '10.05'];
-  const DIAG_MIN = 20;
+  // Simulacro diagnóstico: doce ítems fijos que cubren los componentes de la prueba 2026
+  const DIAG = ['11.04', '11.07', '12.04', '12.11', '13.03', '13.07', '1.09', '3.07', '5.08', '7.07', '14.04', '10.05'];
+  const DIAG_MIN = 24;
+  // Prueba 2026 (Anexo Técnico CNSC): componentes de la prueba de aptitudes y psicotécnica
+  const COMPONENTES = {
+    LC: { nombre: 'Lectura crítica', peso: 20 },
+    RC: { nombre: 'Razonamiento cuantitativo', peso: 20 },
+    CB: { nombre: 'Competencias blandas', peso: 20 },
+    DP: { nombre: 'Conocimientos disciplinares y pedagógicos', peso: 40 },
+    PS: { nombre: 'Prueba psicotécnica', peso: 0 }
+  };
+  const compDe = it => it.w ? 'PS' : it.m === 11 ? 'LC' : it.m === 12 ? 'RC' : it.m === 13 ? 'CB' : 'DP';
+  const MINIMO = 60, PESO_APT = 0.55, PESO_PSI = 0.05;
   const porId = {}; ITEMS.forEach(i => (porId[i.id] = i));
   const LETRAS = ['A', 'B', 'C', 'D'];
-  const ROM = ['', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
+  const ROM = ['', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'XIII', 'XIV'];
   const reducido = matchMedia('(prefers-reduced-motion: reduce)').matches;
   // Modo de compilación: app de usuarios, Entorno simulado o «Prueba nuestro curso»
   const MODO = window.CONCURSA_MODO || {}, PRUEBA = !!MODO.prueba;
@@ -226,9 +236,9 @@
       <h3 class="grupo-titulo">Mesas</h3>
       <div class="cajon">
         <button class="ficha-idx mesa" data-ir="/sesion"><span class="sig">Mesa uno</span><span class="nom">Sesión sincrónica</span>
-          <span class="det">Diez encuentros en vivo con caso, agenda cronometrada y enlace a la videollamada.</span></button>
+          <span class="det">Catorce encuentros en vivo con caso, agenda cronometrada y enlace a la videollamada.</span></button>
         <button class="ficha-idx mesa" data-ir="/simulacro"><span class="sig">Mesa dos</span><span class="nom">Simulacro</span>
-          <span class="det">${ex ? 'Tienes un intento en curso.' : PRUEBA ? 'Simulacro diagnóstico de 10 preguntas.' : 'Simulacro diagnóstico de 10 preguntas y simulacro de la prueba escrita.'}</span></button>
+          <span class="det">${ex ? 'Tienes un intento en curso.' : PRUEBA ? 'Simulacro diagnóstico de ' + DIAG.length + ' preguntas.' : 'Simulacro diagnóstico de ' + DIAG.length + ' preguntas y simulacro de la prueba escrita 2026.'}</span></button>
         <button class="ficha-idx mesa" data-ir="/ruta"><span class="sig">Señalización</span><span class="nom">Ruta del curso</span>
           <span class="det">Video de la ruta del curso y orden recomendado para recorrer la biblioteca.</span></button>
         <button class="ficha-idx mesa" data-ir="/vitrina"><span class="sig">Vitrina</span><span class="nom">Logros y títulos</span>
@@ -380,22 +390,24 @@
   }
 
   /* ───────── Mesa de simulacro ───────── */
-  const LARGOS = { 20: 30, 40: 60, 60: 90 };
+  // Extensión: preguntas de aptitudes, preguntas psicotécnicas y minutos
+  const LARGOS = { 20: 40, 40: 75, 60: 110 }, PSICO = { 20: 5, 40: 8, 60: 12 };
   function vistaMesaSimulacro() {
     const ex = E.examen, errores = ITEMS.filter(i => E.stats[i.id] && E.stats[i.id].u === 0).length;
-    const opcion = (n, nom) => `<li><button class="opcion" role="radio" aria-checked="${E.config.largo === n}" data-acc="largo" data-n="${n}"><span class="let">${n}</span><span><b>${nom}</b><br>${n} preguntas en ${LARGOS[n]} minutos</span></button></li>`;
+    const opcion = (n, nom) => `<li><button class="opcion" role="radio" aria-checked="${E.config.largo === n}" data-acc="largo" data-n="${n}"><span class="let">${n}</span><span><b>${nom}</b><br>${n} de aptitudes y ${PSICO[n]} psicotécnicas en ${LARGOS[n]} minutos</span></button></li>`;
     const diags = E.simulacros.filter(s => s.tipo === 'diag'), sims = E.simulacros.filter(s => s.tipo !== 'diag');
     abrirLibro('Mesa de simulacro', 'Simulacros', `
       ${ex ? `<div class="caso"><b>Tienes un ${ex.tipo === 'diag' ? 'simulacro diagnóstico' : 'simulacro'} en curso.</b> Pregunta ${ex.i + 1} de ${ex.ids.length}; quedan ${mmss(ex.fin - Date.now())}.
         <div class="acciones"><button class="btn" data-ir="/simulacro/examen">Continuar intento</button><button class="btn sec" data-acc="abandonar">Abandonar intento</button></div></div>` : ''}
       <h2>Simulacro diagnóstico</h2>
-      <p>${DIAG.length} preguntas en ${DIAG_MIN} minutos. Al terminar verás en qué estantes conviene concentrarte.</p>
+      <p>${DIAG.length} preguntas en ${DIAG_MIN} minutos, de todos los componentes de la prueba 2026. Al terminar verás en qué estantes conviene concentrarte.</p>
       ${diags.length ? `<ul class="lista-simple">${diags.slice(0, 3).map(s => `<li><button data-ir="/simulacro/resultado/${s.id}"><div class="fila-flex"><span>${fecha(s.fecha)}<br><span class="nota">Simulacro diagnóstico</span></span><strong>${s.directo}</strong></div></button></li>`).join('')}</ul>` : ''}
       <div class="acciones"><button class="btn ancho-total" data-acc="iniciar-diagnostico" ${ex ? 'disabled' : ''}>${diags.length ? 'Presentar de nuevo el diagnóstico' : 'Iniciar simulacro diagnóstico'}</button></div>
       <h2 class="separado">Simulacro de la prueba escrita</h2>
-      ${PRUEBA ? htmlCursoCompleto('El simulacro de 20, 40 o 60 preguntas, con puntaje ponderado, habilidad estimada y perfil por competencias, hace parte del curso completo.') : `
+      ${PRUEBA ? htmlCursoCompleto('El simulacro con la estructura de la prueba 2026, con resultado por componente, mínimo eliminatorio de 60 y aporte estimado al puntaje total, hace parte del curso completo.') : `
+      <p>Sigue la estructura del Anexo Técnico 2026. <b>Parte 1, aptitudes y competencias básicas</b> (eliminatoria, mínimo 60): lectura crítica 20 %, razonamiento cuantitativo 20 %, competencias blandas 20 % y conocimientos disciplinares y pedagógicos 40 %. <b>Parte 2, psicotécnica</b> (clasificatoria), con crédito graduado.</p>
+      <p class="nota">La distribución por componente es una referencia del curso: la CNSC la confirmará en la guía de orientación de la prueba. Igual que en el examen real, no uses calculadora.</p>
       <h3>Elige la extensión</h3>
-      <p class="nota">Las preguntas se toman de los diez estantes en proporción igual y con dificultad equilibrada. La parte final explora competencias comportamentales con crédito graduado.</p>
       <ul class="opciones" role="radiogroup">${opcion(20, 'Corto')}${opcion(40, 'Estándar')}${opcion(60, 'Completo')}</ul>
       <label class="campo" for="umbral">Umbral de referencia para comparar tu puntaje</label>
       <select class="campo" id="umbral" data-cambio="umbral">${[60, 65, 70, 75].map(u => `<option value="${u}" ${E.config.umbral === u ? 'selected' : ''}>${u} sobre 100</option>`).join('')}</select>
@@ -406,7 +418,7 @@
       <p>${errores ? `Tienes ${errores} preguntas cuya última respuesta no fue la mejor.` : 'Aún no hay errores registrados. Aparecerán aquí después de practicar.'}</p>
       ${errores ? '<div class="acciones"><button class="btn sec" data-acc="repaso">Repasar mis errores</button></div>' : ''}
       <h3>Historial</h3>
-      ${sims.length ? `<ul class="lista-simple">${sims.map(s => `<li><button data-ir="/simulacro/resultado/${s.id}"><div class="fila-flex"><span>${fecha(s.fecha)}<br><span class="nota">${s.ids.length} preguntas</span></span><strong>${s.directo}</strong></div></button></li>`).join('')}</ul>` : '<p class="vacio">Tus simulacros terminados aparecerán aquí con su análisis.</p>'}`);
+      ${sims.length ? `<ul class="lista-simple">${sims.map(s => `<li><button data-ir="/simulacro/resultado/${s.id}"><div class="fila-flex"><span>${fecha(s.fecha)}<br><span class="nota">${s.ids.length} preguntas${s.v2026 ? ', estructura 2026' : ''}</span></span><strong>${s.directo}</strong></div></button></li>`).join('')}</ul>` : '<p class="vacio">Tus simulacros terminados aparecerán aquí con su análisis.</p>'}`);
   }
   function vistaGuia(i) {
     i = Math.max(0, Math.min(GUIA.fichas.length - 1, i));
@@ -417,27 +429,37 @@
       ${ult ? '<button class="btn" data-reemplazar="/simulacro">Volver a la mesa</button>' : `<button class="btn" data-reemplazar="/simulacro/guia/${i + 1}">Siguiente página</button>`}</div>`);
   }
 
-  // Tabla de especificaciones: igual número por estante y dificultad equilibrada
+  // Tabla de especificaciones 2026: componentes con su peso, dificultad equilibrada
+  // y, en lo disciplinar, igual número por estante. Las lecturas que comparten texto van juntas.
+  function porNiveles(pool) {
+    const niv = [1, 2, 3].map(n => barajar(pool.filter(i => i.n === n)));
+    let out = [], k = 0;
+    while (niv.some(a => a.length)) { const a = niv[k % 3]; if (a.length) out.push(a.shift()); k++; }
+    return [out[1], out[0], out[2]].filter(Boolean).concat(out.slice(3));   // empieza por media
+  }
   function armarSimulacro(N) {
-    const porMod = Math.round(N / 10), p1 = [], p2 = [];
-    MOD.forEach(m => {
-      let pool = itemsDe(m.id);
-      if (m.id === 10) pool = barajar(pool.filter(i => i.w)).concat(barajar(pool.filter(i => !i.w)));
-      else {
-        const niv = [1, 2, 3].map(n => barajar(pool.filter(i => i.n === n)));
-        pool = []; let k = 0;
-        while (niv.some(a => a.length)) { const a = niv[k % 3]; if (a.length) pool.push(a.shift()); k++; }
-        pool = [pool[1], pool[0], pool[2]].filter(Boolean).concat(pool.slice(3));   // empieza por media
-      }
-      pool.slice(0, porMod).forEach(it => (it.w ? p2 : p1).push(it.id));
-    });
-    return barajar(p1).concat(barajar(p2));
+    const cuota = c => Math.round(N * COMPONENTES[c].peso / 100);
+    const de = c => ITEMS.filter(i => compDe(i) === c);
+    const bloque = c => porNiveles(de(c)).slice(0, cuota(c));
+    // Lectura crítica: agrupa las preguntas que comparten el mismo texto
+    const lc = bloque('LC'), textos = [];
+    lc.forEach(it => { if (!textos.includes(it.ctx)) textos.push(it.ctx); });
+    const lcOrden = barajar(textos).flatMap(t => lc.filter(it => it.ctx === t));
+    // Disciplinar y pedagógico: reparto equitativo entre estantes
+    // el estante XIV (competencias pedagógicas) entra siempre; los demás, en orden aleatorio
+    const conDP = MOD.filter(m => de('DP').some(i => i.m === m.id)).map(m => m.id);
+    const ordenDP = conDP.filter(id => id === 14).concat(barajar(conDP.filter(id => id !== 14)));
+    const mods = ordenDP.map(id => porNiveles(de('DP').filter(i => i.m === id)));
+    const dp = []; let r = 0;
+    while (dp.length < cuota('DP') && mods.some(a => a.length)) { const a = mods[r % mods.length]; if (a.length) dp.push(a.shift()); r++; }
+    const psi = barajar(de('PS')).slice(0, PSICO[N]);
+    return lcOrden.concat(barajar(bloque('RC')), barajar(bloque('CB')), barajar(dp)).map(i => i.id).concat(psi.map(i => i.id));
   }
   function iniciarSimulacro() {
     const N = E.config.largo, ids = armarSimulacro(N), perm = {};
     ids.forEach(id => (perm[id] = barajar([0, 1, 2, 3])));
     const ahora = Date.now();
-    E.examen = { id: 's' + ahora, inicio: ahora, fin: ahora + LARGOS[N] * 60000, dur: LARGOS[N], ids, perm, resp: {}, marcas: {}, i: 0, mapa: false };
+    E.examen = { id: 's' + ahora, v2026: true, inicio: ahora, fin: ahora + LARGOS[N] * 60000, dur: LARGOS[N], ids, perm, resp: {}, marcas: {}, i: 0, mapa: false };
     guardar();
     ir('/simulacro/examen');
   }
@@ -460,7 +482,8 @@
     if (Date.now() >= ex.fin) return terminarExamen(true);
     const it = porId[ex.ids[ex.i]], el = ex.resp[it.id];
     const nP1 = ex.ids.filter(id => !porId[id].w).length;
-    const parte = it.w ? 'Parte 2. Competencias comportamentales' : 'Parte 1. Conocimientos específicos y pedagógicos';
+    const parte = ex.v2026 ? (it.w ? 'Parte 2. Prueba psicotécnica' : 'Parte 1. Aptitudes y competencias básicas: ' + COMPONENTES[compDe(it)].nombre.toLowerCase())
+      : it.w ? 'Parte 2. Competencias comportamentales' : 'Parte 1. Conocimientos específicos y pedagógicos';
     const respondidas = Object.keys(ex.resp).length;
     const mapa = ex.mapa ? `<div class="mapa" role="group" aria-label="Mapa de preguntas">${ex.ids.map((id, k) =>
       `<button class="${ex.resp[id] != null ? 'resp' : ''}${ex.marcas[id] ? ' marc' : ''}${k === ex.i ? ' actual' : ''}" data-acc="saltar" data-k="${k}" aria-label="Pregunta ${k + 1}">${k + 1}</button>`).join('')}</div>
@@ -499,26 +522,32 @@
   const B = { 1: -1, 2: 0, 3: 1 };
   function calificar(r) {
     let pts = 0, pond = 0, pondMax = 0;
-    const comp = {}, area = {}, mod = {};
+    const comp = {}, area = {}, mod = {}, cmp = {};
     r.ids.forEach(id => {
-      const it = porId[id], c = credito(it, r.resp[id]);
+      const it = porId[id]; if (!it) return;
+      const c = credito(it, r.resp[id]);
       pts += c; pond += c * it.n; pondMax += it.n;
       const ac = (o, k) => { o[k] = o[k] || { s: 0, n: 0 }; o[k].s += c; o[k].n++; };
-      ac(comp, it.c); ac(area, COMP[it.c].area); ac(mod, it.m);
+      ac(comp, it.c); ac(area, COMP[it.c].area); ac(mod, it.m); ac(cmp, compDe(it));
     });
+    // Estructura 2026: puntaje de aptitudes (componentes ponderados) y de psicotécnica, por separado
+    const presentes = Object.keys(cmp).filter(k => k !== 'PS');
+    const pesoT = presentes.reduce((t, k) => t + COMPONENTES[k].peso, 0);
+    const apt = pesoT ? pct(presentes.reduce((t, k) => t + COMPONENTES[k].peso * cmp[k].s / cmp[k].n, 0) / pesoT) : 0;
+    const psi = cmp.PS ? pct(cmp.PS.s / cmp.PS.n) : null;
     let num = 0, den = 0;
     for (let th = -4; th <= 4.0001; th += .1) {
       let L = Math.exp(-th * th / 2);
-      r.ids.forEach(id => { const it = porId[id], p = 1 / (1 + Math.exp(-(th - B[it.n]))); L *= (r.resp[id] === it.k) ? p : 1 - p; });
+      r.ids.forEach(id => { const it = porId[id]; if (!it || it.w) return; const p = 1 / (1 + Math.exp(-(th - B[it.n]))); L *= (r.resp[id] === it.k) ? p : 1 - p; });
       num += th * L; den += L;
     }
-    return { directo: pct(pts / r.ids.length), ponderado: pct(pond / pondMax), theta: den ? num / den : 0, comp, area, mod, pts };
+    return { directo: pct(pts / r.ids.length), ponderado: pct(pond / pondMax), theta: den ? num / den : 0, comp, area, mod, pts, cmp, apt, psi };
   }
   function terminarExamen(porTiempo) {
     const ex = E.examen; if (!ex) return;
-    const r = { id: ex.id, tipo: ex.tipo || 'sim', fecha: Date.now(), ids: ex.ids, perm: ex.perm, resp: ex.resp, usado: Math.min(Date.now(), ex.fin) - ex.inicio, dur: ex.dur };
+    const r = { id: ex.id, tipo: ex.tipo || 'sim', v2026: !!ex.v2026, fecha: Date.now(), ids: ex.ids, perm: ex.perm, resp: ex.resp, usado: Math.min(Date.now(), ex.fin) - ex.inicio, dur: ex.dur };
     const cal = calificar(r);
-    r.directo = cal.directo; r.ponderado = cal.ponderado; r.theta = +cal.theta.toFixed(2);
+    r.directo = r.v2026 ? cal.apt : cal.directo; if (r.v2026) r.psi = cal.psi; r.ponderado = cal.ponderado; r.theta = +cal.theta.toFixed(2);
     ex.ids.forEach(id => registrarStat(porId[id], credito(porId[id], ex.resp[id])));
     E.simulacros.unshift(r); E.simulacros = E.simulacros.slice(0, 30);
     E.examen = null; guardar(); pintarDock();
@@ -533,6 +562,7 @@
   function vistaResultado(id) {
     const r = E.simulacros.find(s => s.id === id); if (!r) return reemplazar('/simulacro');
     if (r.tipo === 'diag') return vistaResultadoDiag(r);
+    if (r.v2026) return vistaResultado2026(r);
     const cal = calificar(r), ok = cal.directo >= E.config.umbral;
     const compOrden = Object.keys(cal.comp).sort((a, b) => cal.comp[a].s / cal.comp[a].n - cal.comp[b].s / cal.comp[b].n);
     const th = Math.max(-3, Math.min(3, cal.theta));
@@ -544,16 +574,45 @@
         <div class="indicador"><span>Ponderado</span><strong>${cal.ponderado}</strong></div>
         <div class="indicador"><span>Habilidad θ</span><strong>${cal.theta.toFixed(2).replace('.', ',')}</strong></div>
         <div class="indicador"><span>Tiempo usado</span><strong>${mmss(r.usado)}</strong></div></div>
-      <h3>Habilidad estimada</h3>
+      <p class="nota">Este intento usó la estructura anterior del simulacro. Los nuevos siguen la prueba 2026.</p>
+      ${htmlHabilidad(th, nivelTh)}
+      <h3>Por área de gestión</h3><div class="perfil">${Object.keys(cal.area).map(a => filaPerfil(esc(a), cal.area[a])).join('')}</div>
+      ${htmlPerfiles(r, cal, compOrden)}`);
+  }
+  function htmlHabilidad(th, nivelTh) {
+    return `<h3>Habilidad estimada</h3>
       <div class="theta" role="img" aria-label="Habilidad ${nivelTh}"><i style="left:${(th + 3) / 6 * 100}%"></i></div>
       <div class="theta-esc"><span>−3</span><span>0</span><span>+3</span></div>
-      <p class="nota">Nivel ${nivelTh}. Estimación tipo Rasch con dificultades a priori; sirve para comparar tus intentos entre sí.</p>
-      <h3>Por área de gestión</h3><div class="perfil">${Object.keys(cal.area).map(a => filaPerfil(esc(a), cal.area[a])).join('')}</div>
-      <h3>Por competencia, de menor a mayor</h3><div class="perfil">${compOrden.map(c => filaPerfil(esc(COMP[c].nombre), cal.comp[c], ` <span class="nota">(${cal.comp[c].n})</span>`)).join('')}</div>
+      <p class="nota">Nivel ${nivelTh}. Estimación tipo Rasch con dificultades a priori; sirve para comparar tus intentos entre sí.</p>`;
+  }
+  function htmlPerfiles(r, cal, compOrden) {
+    return `<h3>Por competencia, de menor a mayor</h3><div class="perfil">${compOrden.map(c => filaPerfil(esc(COMP[c].nombre), cal.comp[c], ` <span class="nota">(${cal.comp[c].n})</span>`)).join('')}</div>
       <h3>Por estante</h3><div class="perfil">${Object.keys(cal.mod).map(m => filaPerfil(`<a href="#/estante/${m}">${ROM[m]}. ${esc(MOD[m - 1].corto)}</a>`, cal.mod[m])).join('')}</div>
       <h3>Mapa de respuestas</h3>
       <div class="mapa">${r.ids.map((iid, k) => { const c = credito(porId[iid], r.resp[iid]); return `<button class="${c >= 1 ? 'ok' : 'mal'}" data-ir="/simulacro/revision/${r.id}/${k}" aria-label="Revisar pregunta ${k + 1}">${k + 1}</button>`; }).join('')}</div>
-      <div class="acciones"><button class="btn" data-ir="/simulacro/revision/${r.id}/0">Revisar respuestas</button><button class="btn sec" data-reemplazar="/simulacro">Volver a la mesa</button></div>`);
+      <div class="acciones"><button class="btn" data-ir="/simulacro/revision/${r.id}/0">Revisar respuestas</button><button class="btn sec" data-reemplazar="/simulacro">Volver a la mesa</button></div>`;
+  }
+  function vistaResultado2026(r) {
+    const cal = calificar(r), apt = cal.apt, psi = cal.psi == null ? 0 : cal.psi, pasa = apt >= MINIMO;
+    const aporte = (PESO_APT * apt + PESO_PSI * psi).toFixed(1).replace('.', ',');
+    const compOrden = Object.keys(cal.comp).sort((a, b) => cal.comp[a].s / cal.comp[a].n - cal.comp[b].s / cal.comp[b].n);
+    const th = Math.max(-3, Math.min(3, cal.theta));
+    const nivelTh = th < -1 ? 'en desarrollo' : th < 0 ? 'básico' : th < 1 ? 'competente' : 'avanzado';
+    const filas = ['LC', 'RC', 'CB', 'DP'].filter(k => cal.cmp[k]).map(k => filaPerfil(`${esc(COMPONENTES[k].nombre)} <span class="nota">(${COMPONENTES[k].peso} %)</span>`, cal.cmp[k])).join('');
+    const debil = ['LC', 'RC', 'CB', 'DP'].filter(k => cal.cmp[k]).sort((a, b) => cal.cmp[a].s / cal.cmp[a].n - cal.cmp[b].s / cal.cmp[b].n)[0];
+    const irA = { LC: 11, RC: 12, CB: 13, DP: 14 }[debil];
+    abrirLibro(fecha(r.fecha), 'Resultado del simulacro 2026', `
+      <div class="sello">${anillo(apt)}<div><div class="cifra">${apt}</div>
+        <div class="leyenda">Prueba de aptitudes y competencias básicas, sobre 100. ${pasa ? `Supera el mínimo eliminatorio de ${MINIMO}.` : `No alcanza el mínimo eliminatorio de ${MINIMO}: en el concurso no continuarías.`}</div></div></div>
+      <div class="indicadores">
+        <div class="indicador"><span>Psicotécnica</span><strong>${cal.psi == null ? '—' : psi}</strong></div>
+        <div class="indicador"><span>Aporte estimado</span><strong>${pasa ? aporte : '—'}</strong></div>
+        <div class="indicador"><span>Tiempo usado</span><strong>${mmss(r.usado)}</strong></div></div>
+      <p class="nota">${pasa ? `Aporte al puntaje total: 55 % de aptitudes más 5 % de psicotécnica, ${aporte} de 60 puntos posibles. La valoración de antecedentes (30 %) y la entrevista (10 %) se suman después.` : 'Quien no supera la prueba eliminatoria no suma las demás pruebas.'} Pesos de referencia del Acuerdo 239 de 2026.</p>
+      <h3>Por componente de la prueba de aptitudes</h3><div class="perfil">${filas}</div>
+      ${debil ? `<p class="nota">Tu componente más débil es <b>${esc(COMPONENTES[debil].nombre.toLowerCase())}</b>. ${debil === 'DP' ? 'Repasa los estantes I a IX y el estante XIV.' : `Empieza por el <a href="#/estante/${irA}">estante ${ROM[irA]}</a>.`}</p>` : ''}
+      ${htmlHabilidad(th, nivelTh)}
+      ${htmlPerfiles(r, cal, compOrden)}`);
   }
   function vistaResultadoDiag(r) {
     const cal = calificar(r), pts = String(+cal.pts.toFixed(1)).replace('.', ',');
@@ -563,7 +622,7 @@
         <div class="leyenda">Puntaje sobre 100: ${pts} de ${r.ids.length} puntos posibles, en ${mmss(r.usado)}.</div></div></div>
       <h3>Estantes para reforzar</h3>
       ${debiles.length ? `<ul class="lista-simple">${debiles.map(m => `<li><button data-ir="/estante/${m}"><div class="fila-flex"><span>Estante ${ROM[m]}<br>${esc(MOD[m - 1].titulo)}</span><strong>›</strong></div></button></li>`).join('')}</ul>`
-        : '<p>Respondiste bien las diez preguntas. Pasa al simulacro de la prueba escrita para medir tu avance completo.</p>'}
+        : '<p>Respondiste bien todas las preguntas. Pasa al simulacro de la prueba escrita para medir tu avance completo.</p>'}
       <h3>Mapa de respuestas</h3>
       <div class="mapa">${r.ids.map((iid, k) => { const c = credito(porId[iid], r.resp[iid]); return `<button class="${c >= 1 ? 'ok' : 'mal'}" data-ir="/simulacro/revision/${r.id}/${k}" aria-label="Revisar pregunta ${k + 1}">${k + 1}</button>`; }).join('')}</div>
       <div class="acciones"><button class="btn" data-ir="/simulacro/revision/${r.id}/0">Revisar respuestas</button><button class="btn sec" data-reemplazar="/simulacro">Volver a la mesa</button></div>`);
@@ -823,10 +882,10 @@
         : '<p class="vacio">El video de la ruta del curso aún no está en este teléfono. El administrador te lo enviará por WhatsApp; cuando lo recibas, pega el mensaje al final de esta página.</p>'}
       <h3>Recorrido recomendado</h3>
       <ol class="ruta-pasos">
-        <li><b>Simulacro diagnóstico.</b> Diez preguntas para conocer tu punto de partida. <a href="#/simulacro">Ir a la mesa de simulacro</a></li>
-        <li><b>Estantes I a X.</b> Lee las fichas, supera los retos, consulta el contenido completo y practica. <a href="#/catalogo">Abrir el catálogo</a></li>
+        <li><b>Simulacro diagnóstico.</b> ${DIAG.length} preguntas para conocer tu punto de partida en los componentes de la prueba 2026. <a href="#/simulacro">Ir a la mesa de simulacro</a></li>
+        <li><b>Estantes I a XIV.</b> Lee las fichas, supera los retos, consulta el contenido completo y practica. <a href="#/catalogo">Abrir el catálogo</a></li>
         <li><b>Sesiones sincrónicas.</b> Un encuentro en vivo por estante. <a href="#/sesion">Ir a la mesa de sesión</a></li>
-        <li><b>Simulacro de la prueba escrita.</b> Mide tu avance con 20, 40 o 60 preguntas. <a href="#/simulacro">Ir a la mesa de simulacro</a></li>
+        <li><b>Simulacro de la prueba escrita.</b> Mide tu avance con la estructura 2026: aptitudes y competencias básicas más psicotécnica. <a href="#/simulacro">Ir a la mesa de simulacro</a></li>
       </ol>
       ${PRUEBA ? htmlCursoCompleto() : `<h3>${url ? '¿Recibiste un enlace nuevo?' : 'Pega aquí el mensaje del video'}</h3>
       <p class="nota">Copia completo el mensaje del administrador, con el enlace y la clave del video.</p>
@@ -844,7 +903,7 @@
   function vistaMesaSesion() {
     const hechas = SES.filter(s => E.sesiones[s.n] && E.sesiones[s.n].hecha).length;
     abrirLibro('Mesa de sesión sincrónica', 'Encuentros en vivo', `
-      <p>Diez sesiones de 90 minutos, una por estante. Cada guion trae un caso detonante, preguntas de discusión, agenda cronometrada y ticket de salida.</p>
+      <p>${SES.length} sesiones de 90 minutos, una por estante. Cada guion trae un caso detonante, preguntas de discusión, agenda cronometrada y ticket de salida.</p>
       <label class="campo" for="enlace">Enlace de la videollamada (Meet, Zoom, Teams o similar)</label>
       <input class="campo" id="enlace" type="url" inputmode="url" placeholder="https://meet.google.com/…" value="${esc(E.config.enlace)}">
       <div class="acciones"><button class="btn sec" data-acc="guardar-enlace">Guardar enlace</button><button class="btn" data-acc="unirse">Unirse a la videollamada</button></div>
